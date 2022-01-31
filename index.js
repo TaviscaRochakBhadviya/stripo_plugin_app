@@ -102,7 +102,11 @@ var EMAILInitialization = {
 * This method will return html entry response to load plugin.
 */
 async function getTemplateFromEntry() {
-    var url = `${Configuration.ContentStack.baseUrl}` + 'content_types/' + `${usercontext.contentTypeId}` + '/entries/' + `${usercontext.entryId}`+'?version='+`${usercontext.version}`;
+    var queryParameter = {
+        locale: usercontext.locale
+    }
+    var url = `${Configuration.ContentStack.baseUrl}` + 'content_types/' + `${usercontext.contentTypeId}`
+                     + '/entries/' + `${usercontext.entryId}?` + addQueryParametersToContentStackUrl(queryParameter);
     var headers = EMAILUtility.getContentStackRequestHeader();
     return await EMAILUtility.createFetchRequest(url, headers, "GET");
 }
@@ -112,6 +116,11 @@ async function getTemplateFromEntry() {
 */
 async function saveTemplateToContentStack(htmltext) {
 
+    var queryParameter = {
+        form_uid: usercontext.customblock.contenttypeuuid,
+        entry_uid: usercontext.entryId,
+        locale: usercontext.locale
+    }
     var response = retrieveContentBlockContentFromHTML(htmltext);
 
     var data = {
@@ -125,7 +134,8 @@ async function saveTemplateToContentStack(htmltext) {
         }
     };
 
-    var url = `${Configuration.ContentStack.baseUrl}` + 'content_types/' + `${usercontext.contentTypeId}` + '/entries/' + `${usercontext.entryId}`+'?version='+`${usercontext.version}`;
+    var url = `${Configuration.ContentStack.baseUrl}` + 'content_types/' + `${usercontext.contentTypeId}` + '/entries/' +
+                     `${usercontext.entryId}?` + addQueryParametersToContentStackUrl(queryParameter);
     var headers = EMAILUtility.getContentStackRequestHeader();
 
     var successCode = await EMAILUtility.createFetchRequest(url, headers, "PUT", data);
